@@ -65,4 +65,4 @@ def load_model(fname):
     except FileNotFoundError:
         # Handle the case when the file is not found
         print(f"\033[91m{fname} don't match any file, saved model file not found\033[0m")  # Print in red and reset color
-        sys.exit("Program terminated: No saved model file found")
+        sys.exit()

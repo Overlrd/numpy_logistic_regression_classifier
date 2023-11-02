@@ -9,12 +9,15 @@ the steps we will follow are:
 """
 
 import argparse
+import pathlib
+import sys
 from PIL import Image
 import numpy as np
 import copy
 
 from lr_utils import load_dataset, normalize_dataset, reshape_dataset, sigmoid, save_model, load_model
 from public_tests import *
+
 
 def initialize_with_zeros(dim):
     """
@@ -23,6 +26,7 @@ def initialize_with_zeros(dim):
     w = np.zeros((dim, 1))
     b = 0.
     return w , b
+
 
 def propagate(w, b, X, Y):
     """
@@ -60,6 +64,8 @@ def optimize(w, b, X, Y, num_iterations=100, learning_rate=0.009, print_cost=Fal
     """
     w = copy.deepcopy(w)
     b = copy.deepcopy(b)
+    dw = None
+    db = None
 
     costs = []
 
@@ -160,6 +166,7 @@ def model(X_train, Y_train, X_test, Y_test, classes=None, num_iterations=2000, l
 
     return d
 
+
 def predict_custom_image(model_data_path, image_name, image_square_size):
     model_data = load_model(model_data_path)
     w = model_data["w"]
@@ -167,6 +174,9 @@ def predict_custom_image(model_data_path, image_name, image_square_size):
     classes = model_data["classes"]
 
     fname = "images/" + image_name
+    if not pathlib.Path(fname).exists():
+        print(f"provided file {image_name} not found, file is not in the 'images' directory.")
+        sys.exit()
     image = np.array(Image.open(fname).resize((image_square_size, image_square_size)))
     image = normalize_dataset(image)
     image = reshape_dataset(image, True, 1, image_square_size * image_square_size * 3)
